@@ -1,10 +1,9 @@
 const express = require('express')
-const passport = require('passport')
 const usersRouter = express.Router()
 
 const User = require('../models/User')
 
-const { doesEmailExist } = require('../helpers/doesEmailExist')
+const doesEmailExist = require('../helpers/doesEmailExist')
 
 // login page
 usersRouter.get('/login', (req, res) => {
@@ -54,22 +53,36 @@ usersRouter.post('/register', async (req, res) => {
 
 })
 
+
 // Post req on /login
 usersRouter.post('/login', (req, res, next) => {
-    passport.authenticate('local', {
-        successRedirect: '/ideas',
-        failureRedirect: '/users/login',
-        failureFlash: true
-    })(req, res, next)
+    User.findOne({email: req.body.email})
+        .then(async user => {
+            if (!user) {
+                req.flash('error_msg', 'Wrong email')
+                return res.redirect('/users/login')
+            }
+            if (!await user.matchPassword(req.body.password)) {
+                req.flash('error_msg', 'Wrong password')
+                return res.redirect('/users/login')
+            }
+            req.session.user = user.id
+            req.session.save(() => {    // save session then redirect
+                req.flash('success_msg', 'Successfully Logged In')
+                res.redirect('/ideas')
+            })
+        })
 })
+
 
 // Logout the user
 usersRouter.get('/logout', (req, res, next) => {
-    req.logout()
-    req.flash('success_msg', 'You are successfully logged Out!')
-    res.redirect('/users/login')
+    req.session.user = null
+    req.session.save(() => {
+        req.flash('success_msg', 'You are successfully logged Out!')
+        res.redirect('/users/login')
+    })
 })
-
 
 
 

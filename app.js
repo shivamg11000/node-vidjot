@@ -7,7 +7,6 @@ const methodOverride = require('method-override');
 const flash = require('connect-flash');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
-const passport = require('passport');
 
 
 const app = express()
@@ -18,15 +17,13 @@ const ideasRouter = require('./routes/ideasRouter')
 const usersRouter = require('./routes/usersRouter')
 
 // Passport Config
-require('./config/passport')(passport)
+//require('./config/passport')(passport)                //
 
 
 mongoose.Promise = global.Promise
-mongoose.connect("mongodb://localhost/vid_jot", {useMongoClient: true})
+mongoose.connect("mongodb://test:test@ds131432.mlab.com:31432/vidjot", {useMongoClient: true})
     .then(() => {console.log("MongoDB Connected...")})
     .catch(err => console.log(err))
-
-
 
 
 // Handlebars
@@ -43,24 +40,26 @@ app.use(express.static(path.join(__dirname,'public')))
 app.use(methodOverride('_method'))
 app.use(session({    // used to store flash messages and user sessions
     secret: 'secret',
-    resave: true,
+    resave: false,
     saveUninitialized: true,
     cookie: {maxAge: 3600000*2},
     store: new MongoStore({   // store sessins in mongodb
         mongooseConnection: mongoose.connection
     })
 }))
-//passport middleware, must be after express-session
-app.use(passport.initialize())
-app.use(passport.session())
-
+app.use(function(req, res, next) {  
+    if (req.session.user) {
+        req.user = req.session.user
+        req.isAuthenticated = true
+    }
+    next()
+})
 app.use(flash())
 
 // Global Variables for the views
 app.use(function(req, res, next) {
     res.locals.success_msg = req.flash('success_msg')
     res.locals.error_msg = req.flash('error_msg')
-    res.locals.error = req.flash('error')  // variable used by passport
     res.locals.user = req.user || null
     next()
 })
@@ -87,6 +86,7 @@ app.use('/ideas', ideasRouter)
 
 //  User Routes
 app.use('/users', usersRouter)
+
 
 
 const PORT = process.env.PORT || 8000

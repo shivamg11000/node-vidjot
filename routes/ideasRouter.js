@@ -1,10 +1,11 @@
 const express = require('express')
 const ideasRouter = express.Router()
-const { ensureAuthenticated } = require('../helpers/auth') 
 
 const Idea = require('../models/Idea')
 
-ideasRouter.use(ensureAuthenticated) // protect ideas route for unauthorized
+
+ideasRouter.use(require('../helpers/auth').ensureAuthenticated)      // protect ideas route for unauthorized access
+
 
 // add Idea page 
 ideasRouter.get('/add', (req, res) => {
