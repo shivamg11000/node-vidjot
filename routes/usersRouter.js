@@ -54,10 +54,10 @@ usersRouter.post('/register', async (req, res) => {
 })
 
 
-// Post req on /login
-usersRouter.post('/login', (req, res, next) => {
-    User.findOne({email: req.body.email})
-        .then(async user => {
+// Login the user
+usersRouter.post('/login', (req, res, next) => {     // user is authenticated only here
+    User.findOne({email: req.body.email})            // cookie is set containing session ID
+        .then(async user => {                        // session data is stored in mongodb
             if (!user) {
                 req.flash('error_msg', 'Wrong email')
                 return res.redirect('/users/login')
