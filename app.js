@@ -16,9 +16,6 @@ const app = express()
 const ideasRouter = require('./routes/ideasRouter')
 const usersRouter = require('./routes/usersRouter')
 
-// Passport Config
-//require('./config/passport')(passport)                //
-
 
 mongoose.Promise = global.Promise
 mongoose.connect("mongodb://test:test@ds131432.mlab.com:31432/vidjot", {useMongoClient: true})
@@ -47,9 +44,9 @@ app.use(session({    // used to store flash messages and user sessions
         mongooseConnection: mongoose.connection
     })
 }))
-app.use(function(req, res, next) {  
-    if (req.session.user) {
-        req.user = req.session.user
+app.use(function(req, res, next) {    // on  every request made to the server
+    if (req.session.user) {           // if there is session data related to the session ID
+        req.user = req.session.user   // add session data and isAuthenticated=true to req
         req.isAuthenticated = true
     }
     next()
