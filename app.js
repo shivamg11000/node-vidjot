@@ -43,7 +43,7 @@ app.use(express.static(path.join(__dirname,'public')))
 app.use(methodOverride('_method'))
 app.use(session({    // used to store flash messages and user sessions
     secret: 'secret',
-    resave: true,
+    resave: false,
     saveUninitialized: true,
     cookie: {maxAge: 3600000*2},
     store: new MongoStore({   // store sessins in mongodb

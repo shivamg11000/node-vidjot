@@ -54,10 +54,10 @@ usersRouter.post('/register', async (req, res) => {
 
 })
 
-// Post req on /login
-usersRouter.post('/login', (req, res, next) => {
-    passport.authenticate('local', {
-        successRedirect: '/ideas',
+// Login the user
+usersRouter.post('/login', (req, res, next) => {   // authentication via passport done here only 
+    passport.authenticate('local', {               // using local strategy - means credentials are mathced in the database only
+        successRedirect: '/ideas',                 
         failureRedirect: '/users/login',
         failureFlash: true
     })(req, res, next)
