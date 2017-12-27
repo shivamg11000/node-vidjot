@@ -2,6 +2,9 @@
   "name": "vidjot",
   "version": "1.0.0",
   "description": "app to create video ideas",
+  "engines": {
+    "node": "8.8.1"
+  },
   "main": "app.js",
   "scripts": {
     "start": "node app.js"

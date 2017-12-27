@@ -55,22 +55,27 @@ usersRouter.post('/register', async (req, res) => {
 })
 
 // Login the user
-usersRouter.post('/login', (req, res, next) => {   // authentication via passport done here only 
-    passport.authenticate('local', {               // using local strategy - means credentials are mathced in the database only
-        successRedirect: '/ideas',                 
-        failureRedirect: '/users/login',
-        failureFlash: true
-    })(req, res, next)
-})
+usersRouter.post('/login', passport.authenticate('local',{            // never use succesRedirect option when using persistent sessions, passport redirects before saving sessions
+    failureRedirect: '/users/login',                                  // explicitly save session on success   
+    failureFlash: true                                                // authentication via passport done here only
+}), (req, res) => {                                                   // using local strategy - means credentials are mathced in the database only
+    //user credentials matched in db, then
+    req.session.save(() => {
+        req.flash('success_msg', 'Logged In Successfully')
+        res.redirect('/ideas')
+    })
+
+})                                                         
+                                                                      
+                                                 
+  
 
 // Logout the user
-usersRouter.get('/logout', (req, res, next) => {
-    req.logout()
+usersRouter.get('/logout', async (req, res, next) => {
+    req.logout()                                  // passport added a logout function to the req object
     req.flash('success_msg', 'You are successfully logged Out!')
     res.redirect('/users/login')
 })
-
-
 
 
 module.exports = usersRouter

@@ -22,7 +22,7 @@ require('./config/passport')(passport)
 
 
 mongoose.Promise = global.Promise
-mongoose.connect("mongodb://localhost/vid_jot", {useMongoClient: true})
+mongoose.connect("mongodb://test:test@ds131432.mlab.com:31432/vidjot", {useMongoClient: true})
     .then(() => {console.log("MongoDB Connected...")})
     .catch(err => console.log(err))
 
@@ -43,7 +43,7 @@ app.use(express.static(path.join(__dirname,'public')))
 app.use(methodOverride('_method'))
 app.use(session({    // used to store flash messages and user sessions
     secret: 'secret',
-    resave: false,
+    resave: true,
     saveUninitialized: true,
     cookie: {maxAge: 3600000*2},
     store: new MongoStore({   // store sessins in mongodb
@@ -52,7 +52,7 @@ app.use(session({    // used to store flash messages and user sessions
 }))
 //passport middleware, must be after express-session
 app.use(passport.initialize())
-app.use(passport.session())
+app.use(passport.session())           
 
 app.use(flash())
 
@@ -60,7 +60,7 @@ app.use(flash())
 app.use(function(req, res, next) {
     res.locals.success_msg = req.flash('success_msg')
     res.locals.error_msg = req.flash('error_msg')
-    res.locals.error = req.flash('error')  // variable used by passport
+    res.locals.error = req.flash('error')      // variable used by passport
     res.locals.user = req.user || null
     next()
 })
