@@ -1,5 +1,6 @@
 const LocalStrategy = require('passport-local').Strategy
 const GoogleStrategy = require('passport-google-oauth20').Strategy
+const FacebookStrategy = require('passport-facebook').Strategy
 
 const User = require('../models/User')
 
@@ -28,11 +29,11 @@ module.exports = function(passport) {
     }))
 
 
-    // google OAuth2.0
+    // google oauth
     passport.use(new GoogleStrategy({
         // id and secret are given on google's developer page, oauth api
-        clientID: '872315115673-6a5h28e7ag4gcqndievjt6gfbeu82f65.apps.googleusercontent.com',
-        clientSecret: '8FdZPVbz2B26CRf6oTpACA0e',
+        clientID: '701474689447-74rn9pgamm3g8r6qh9mhfihcq4o9hqlh.apps.googleusercontent.com',
+        clientSecret: 'rat0v8WkoGpulfY4yIKIArt7',
         callbackURL: '/auth/google/redirect'
 
     }, async (accessToken, refreshToken, profile, cb) => {
@@ -59,6 +60,39 @@ module.exports = function(passport) {
 
     }))
 
+    
+    // facebook oauth
+    passport.use(new FacebookStrategy({
+        clientID: '1757616487880895',
+        clientSecret: '3ab15b7662e0f0dc05b34e0d326f0b39',
+        callbackURL: "/auth/facebook/redirect",
+        profileFields: ['id', 'displayName', 'email']   // profile return many fields, to explicitally recieve certain fields
+      },
+      async(accessToken, refreshToken, profile, cb) => {
+          
+        const facebookID = profile.id
+        const name = profile.displayName
+        const emailID = profile.emails[0].value
+
+        const user = await User.findOne({email: emailID})
+
+        if (user) {
+            return cb(null, user)
+        }
+        const newUser = new User({
+            email: emailID,
+            name: name,
+            facebookData: {
+                id: facebookID,
+                displayName: name
+            }
+        })
+        newUser.save().then((user) => {
+            return cb(null, user)
+        })
+      }
+    ))
+    
 
     passport.serializeUser((user, done) => { // when user is authenticated serialize user ID to the session
         done(null, user.id)

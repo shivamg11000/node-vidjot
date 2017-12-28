@@ -20,7 +20,7 @@ router.post('/local', passport.authenticate('local',{            // never use su
 
 // google oauth2.0
 router.get('/google', passport.authenticate('google',{
-    scope: ['email', 'profile']
+    scope: ['email']
 }))
 
 
@@ -35,6 +35,19 @@ router.get('/google/redirect', passport.authenticate('google', {
 
 
 // facebook oauth2.0
+router.get('/facebook', passport.authenticate('facebook',{
+    scope: ['email']
+}))
+
+
+router.get('/facebook/redirect', passport.authenticate('facebook', {
+    failureRedirect: '/users/login'
+}), (req, res) => {
+    req.session.save(() => {
+        req.flash('success_msg', 'Logged In via Facebook Successfully')
+        res.redirect('/ideas')
+    })
+})
 
 
 module.exports = router
