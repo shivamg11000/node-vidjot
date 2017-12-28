@@ -14,8 +14,15 @@ const UserSchema = new Schema({
         dropDups: true
     },
     password: {
-        type: String,
-        required: true
+        type: String
+    },
+    googleData: {            // data on google database related to the user
+        id: String,          // unique id on google db
+        displayName: String  // display name on google
+    },
+    facebookData: {          // data on facebook database related to the user
+        id: String,
+        displayName: String
     },
     date: {
         type: Date,
@@ -25,6 +32,8 @@ const UserSchema = new Schema({
 
 // hash password before saving
 UserSchema.pre('save', function(next) {
+    if (!this.password) // if there is no password in db
+        return next() 
 
     bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(this.password, salt, (err, hash) => {
@@ -38,6 +47,8 @@ UserSchema.pre('save', function(next) {
 // match password, returns true or false
 UserSchema.methods.matchPassword = function(passwordAttempt) {
     return new Promise(resolve => {
+        if (!this.password)
+            return resolve(false)
 
         bcrypt.compare(passwordAttempt, this.password, (err, isMatch) => {
             if (err) {

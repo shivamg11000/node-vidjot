@@ -1,23 +1,22 @@
 const express = require('express')
-const passport = require('passport')
-const usersRouter = express.Router()
+const router = express.Router()
 
 const User = require('../models/User')
 
 const { doesEmailExist } = require('../helpers/doesEmailExist')
 
 // login page
-usersRouter.get('/login', (req, res) => {
+router.get('/login', (req, res) => {
     res.render('users/login')
 })
 
 //  Signup page
-usersRouter.get('/register', (req, res) => {
+router.get('/register', (req, res) => {
     res.render('users/register')
 })
 
 // register user
-usersRouter.post('/register', async (req, res) => {
+router.post('/register', async (req, res) => {
     // server side validation
     let errors = []
 
@@ -53,29 +52,15 @@ usersRouter.post('/register', async (req, res) => {
     }
 
 })
-
-// Login the user
-usersRouter.post('/login', passport.authenticate('local',{            // never use succesRedirect option when using persistent sessions, passport redirects before saving sessions
-    failureRedirect: '/users/login',                                  // explicitly save session on success   
-    failureFlash: true                                                // authentication via passport done here only
-}), (req, res) => {                                                   // using local strategy - means credentials are mathced in the database only
-    //user credentials matched in db, then
-    req.session.save(() => {
-        req.flash('success_msg', 'Logged In Successfully')
-        res.redirect('/ideas')
-    })
-
-})                                                         
+                                          
                                                                       
-                                                 
-  
 
 // Logout the user
-usersRouter.get('/logout', async (req, res, next) => {
+router.get('/logout', async (req, res, next) => {
     req.logout()                                  // passport added a logout function to the req object
     req.flash('success_msg', 'You are successfully logged Out!')
     res.redirect('/users/login')
 })
 
 
-module.exports = usersRouter
+module.exports = router

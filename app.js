@@ -13,16 +13,17 @@ const passport = require('passport');
 const app = express()
 
 
-// Routers
-const ideasRouter = require('./routes/ideasRouter')
-const usersRouter = require('./routes/usersRouter')
+// routes
+const ideasRoutes = require('./routes/ideasRoutes')
+const usersRoutes = require('./routes/usersRoutes')
+const authRoutes = require('./routes/authRoutes')
 
 // Passport Config
 require('./config/passport')(passport)
 
 
 mongoose.Promise = global.Promise
-mongoose.connect("mongodb://test:test@ds131432.mlab.com:31432/vidjot", {useMongoClient: true})
+mongoose.connect("mongodb://localhost/playgrnd", {useMongoClient: true})
     .then(() => {console.log("MongoDB Connected...")})
     .catch(err => console.log(err))
 
@@ -81,13 +82,16 @@ app.get("/about", (req, res) => {
     res.render("about")
 })
 
-// ideas routing
-app.use('/ideas', ideasRouter)
 
+// mount routes
+// ideas routing
+app.use('/ideas', ideasRoutes)
 
 //  User Routes
-app.use('/users', usersRouter)
+app.use('/users', usersRoutes)
 
+// auth Routes
+app.use('/auth', authRoutes)
 
 const PORT = process.env.PORT || 8000
 app.listen(PORT, () => {

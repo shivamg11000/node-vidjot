@@ -1,18 +1,18 @@
 const express = require('express')
-const ideasRouter = express.Router()
+const router = express.Router()
 const { ensureAuthenticated } = require('../helpers/auth') 
 
 const Idea = require('../models/Idea')
 
-ideasRouter.use(ensureAuthenticated) // protect ideas route for unauthorized
+router.use(ensureAuthenticated) // protect ideas route for unauthorized
 
 // add Idea page 
-ideasRouter.get('/add', (req, res) => {
+router.get('/add', (req, res) => {
     res.render('ideas/add')
 })
 
 // edit page
-ideasRouter.get('/edit/:id', (req, res) => {
+router.get('/edit/:id', (req, res) => {
 
     Idea.findOne({
         _id: req.params.id,
@@ -24,7 +24,7 @@ ideasRouter.get('/edit/:id', (req, res) => {
 })
 
 //get ideas
-ideasRouter.get('/', (req, res) => {
+router.get('/', (req, res) => {
 
     Idea.find({user: req.user})
         .sort({date: 'desc'})
@@ -34,7 +34,7 @@ ideasRouter.get('/', (req, res) => {
 })
 
 // add idea
-ideasRouter.post('/', (req, res) => {
+router.post('/', (req, res) => {
     // server side validation
     let errors = []
 
@@ -70,7 +70,7 @@ ideasRouter.post('/', (req, res) => {
 })
 
 // edit Form process
-ideasRouter.put('/:id', (req, res) => {
+router.put('/:id', (req, res) => {
    
     Idea.findOne({
         _id: req.params.id,
@@ -90,7 +90,7 @@ ideasRouter.put('/:id', (req, res) => {
 })
 
 // delete idea 
-ideasRouter.delete('/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
 
     Idea.findOneAndRemove({
         _id: req.params.id,
@@ -106,4 +106,4 @@ ideasRouter.delete('/:id', (req, res) => {
 
 
 
-module.exports = ideasRouter
+module.exports = router

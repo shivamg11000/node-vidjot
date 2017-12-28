@@ -4,7 +4,7 @@
         <div class="card card-body bg-light">
             <img src="/img/logo.png" alt="logo" style="max-width: 8rem; margin:auto">
             <h3 class="text-center">Account Login</h3>
-            <form action="/users/login" method="post">
+            <form action="/auth/local" method="post">
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" name="email" class="form-control" required/>
@@ -16,5 +16,15 @@
                 <button class="btn btn-primary" type="Submit">Submit</button>
             </form>
         </div>
+    </div>
+</div>
+<div class="row mt-2">
+    <div class="col-md-6 mx-auto d-flex">
+        <form action="/auth/google" method="get" class="mr-2">
+            <button class="btn btn-danger btn-block" type="submit">Google Login</button>    
+        </form>
+        <form action="/auth/facebook" method="get" class="mr-2">
+            <button class="btn btn-danger btn-block" type="submit">Facebook Login</button>
+        </form>
     </div>
 </div>
