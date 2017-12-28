@@ -3,14 +3,15 @@ const path = require('path');
 const exphbs = require('express-handlebars');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser'); 
+const cookieParser = require('cookie-parser')
 const methodOverride = require('method-override');
 const flash = require('connect-flash');
 const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
-
+const jwt = require('jsonwebtoken')
 
 const app = express()
 
+const secret = require('./config/secret')
 
 // Routers
 const ideasRouter = require('./routes/ideasRouter')
@@ -18,7 +19,7 @@ const usersRouter = require('./routes/usersRouter')
 
 
 mongoose.Promise = global.Promise
-mongoose.connect("mongodb://test:test@ds131432.mlab.com:31432/vidjot", {useMongoClient: true})
+mongoose.connect("mongodb://localhost/myDB", {useMongoClient: true})
     .then(() => {console.log("MongoDB Connected...")})
     .catch(err => console.log(err))
 
@@ -35,18 +36,16 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname,'public')))
 app.use(methodOverride('_method'))
-app.use(session({    // used to store flash messages and user sessions
-    secret: 'secret',
-    resave: false,
+app.use(cookieParser(secret.cookieParseSecret))   // to read jwt token in cookie
+app.use(session({    // used to store flash messages
+    secret: secret.cookieParseSecret,
+    resave: true,
     saveUninitialized: true,
-    cookie: {maxAge: 3600000*2},
-    store: new MongoStore({   // store sessins in mongodb
-        mongooseConnection: mongoose.connection
-    })
+    cookie: {maxAge: 1000*60*10} // 10 min
 }))
-app.use(function(req, res, next) {    // on  every request made to the server
-    if (req.session.user) {           // if there is session data related to the session ID
-        req.user = req.session.user   // add session data and isAuthenticated=true to req
+app.use(function(req, res, next) {               // on every req if there is token in cookie retrieve user data from jwt   
+    if (req.signedCookies && req.signedCookies.token) {
+        req.user = jwt.verify(req.signedCookies.token, secret.jwtSecret)
         req.isAuthenticated = true
     }
     next()

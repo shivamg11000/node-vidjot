@@ -1,5 +1,7 @@
 const express = require('express')
 const usersRouter = express.Router()
+const jwt = require('jsonwebtoken')
+const secret = require('../config/secret')
 
 const User = require('../models/User')
 
@@ -56,8 +58,8 @@ usersRouter.post('/register', async (req, res) => {
 
 // Login the user
 usersRouter.post('/login', (req, res, next) => {     // user is authenticated only here
-    User.findOne({email: req.body.email})            // cookie is set containing session ID
-        .then(async user => {                        // session data is stored in mongodb
+    User.findOne({email: req.body.email})            // jsonwebtoken is created from user.id and stored in cookie
+        .then(async user => {                        
             if (!user) {
                 req.flash('error_msg', 'Wrong email')
                 return res.redirect('/users/login')
@@ -66,22 +68,26 @@ usersRouter.post('/login', (req, res, next) => {     // user is authenticated on
                 req.flash('error_msg', 'Wrong password')
                 return res.redirect('/users/login')
             }
-            req.session.user = user.id
-            req.session.save(() => {    // save session then redirect
-                req.flash('success_msg', 'Successfully Logged In')
-                res.redirect('/ideas')
+
+            const token = jwt.sign(user.id, secret.jwtSecret)
+            res.cookie('token', token, {
+                maxAge: 1000*60*60*2,     // 2hr
+                signed: true,
+                httpOnly: true            // not readable by browser
             })
+            req.flash('success_msg', 'Successfully Logged In')
+            res.redirect('/ideas')
+            
         })
 })
 
 
 // Logout the user
 usersRouter.get('/logout', (req, res, next) => {
-    req.session.user = null
-    req.session.save(() => {
-        req.flash('success_msg', 'You are successfully logged Out!')
-        res.redirect('/users/login')
-    })
+    res.clearCookie('token')
+    req.flash('success_msg', 'You are successfully logged Out!')
+    res.redirect('/users/login')
+
 })
 
 
