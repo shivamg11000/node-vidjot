@@ -23,7 +23,7 @@ require('./config/passport')(passport)
 
 
 mongoose.Promise = global.Promise
-mongoose.connect("mongodb://localhost/playgrnd", {useMongoClient: true})
+mongoose.connect("mongodb://test:test@ds131432.mlab.com:31432/vidjot", {useMongoClient: true})
     .then(() => {console.log("MongoDB Connected...")})
     .catch(err => console.log(err))
 
