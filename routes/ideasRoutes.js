@@ -49,13 +49,15 @@ router.post('/', (req, res) => {
         res.render('ideas/add', {
             errors: errors,
             title: req.body.title,
-            details: req.body.details
+            details: req.body.details,
+            casts: req.body.casts.split(',')
         })
     } else {
         const newIdea = {
             title: req.body.title,
             details: req.body.details,
-            user: req.user
+            user: req.user,
+            casts: req.body.casts.split(',')
         }
         new Idea(newIdea)
             .save()
@@ -80,6 +82,8 @@ router.put('/:id', (req, res) => {
         // updated values
         idea.title = req.body.title
         idea.details = req.body.details
+        idea.casts = req.body.casts.split(',')
+        console.log(idea)
         idea.save()
             .then(idea => {
                 req.flash('success_msg', 'Idea updated')

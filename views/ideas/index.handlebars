@@ -1,7 +1,13 @@
 {{#each ideas}}
-    <div class="card card-body">
-        <h3>{{title}}</h3>
-        <p>{{details}}</p>
+    <div class="card card-body mb-3" style="box-shadow: 0 0 2px rgba(0,0,0,0.2);">
+        <h3 class="font-weight-bold">{{title}}</h3>
+        <pre>{{details}}</pre>
+        <ul class="list-unstyled d-flex flex align-items-center flex-wrap">
+        <span class="font-weight-bold">Cast : </span>      
+        {{#each casts}}
+            <li class="bg-light p-1 m-1 rounded">{{ this }}</li>
+        {{/each}}
+        </ul>
         <a class="btn btn-dark btn-block mb-2" href="/ideas/edit/{{id}}">Edit</a>
         <form method="post" action="/ideas/{{id}}?_method=DELETE">
             <input type="hidden" name="_method" value="DELETE">
