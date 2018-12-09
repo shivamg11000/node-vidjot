@@ -11,7 +11,7 @@ router.get('/add', (req, res) => {
     res.render('ideas/add')
 })
 
-// edit page
+// edit Idea page
 router.get('/edit/:id', (req, res) => {
 
     Idea.findOne({
@@ -83,7 +83,7 @@ router.put('/:id', (req, res) => {
         idea.title = req.body.title
         idea.details = req.body.details
         idea.casts = req.body.casts.split(',')
-        console.log(idea)
+        
         idea.save()
             .then(idea => {
                 req.flash('success_msg', 'Idea updated')

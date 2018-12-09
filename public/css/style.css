@@ -1,0 +1,77 @@
+
+/* collapsing btn */
+div.card button.collapsing-btn{
+    position: absolute;
+    top: 0.4em;
+    right: 1em;
+    width: 2em;
+    height: 2em;
+    border-radius: 1em; 
+    cursor: pointer;
+}
+div.card button.collapsing-btn img{
+    width: 100%;
+}
+
+
+/*  collapsed css  */
+.collapsed{
+    height: 4.5em;
+}
+.collapsed > *{
+    visibility: hidden;
+}
+.collapsed > h3, .collapsed > .collapsing-btn{
+    visibility: visible;
+}
+
+/* video player */
+#video{
+    height: 10em;
+    width: 100%;
+    margin-bottom: 0.6em; 
+    border-radius: 50px;
+}
+
+/* video section */
+.video-section{
+    position: relative;
+    padding: 0.5em 0.2em;
+}
+
+.addVideo{
+    width: 3.5em;
+    border: 0;
+    background-color: rgba(0,0,0,0);
+    cursor: pointer;
+}
+.addVideo img{
+    width: 100%;
+}
+.video-section input[type="text"]{
+    position: absolute;
+    top: 0.8em;
+    left: 5em;
+    width: 20em;
+    height: 2em;
+    outline: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+.video-section input[type="text"].active{
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(1em);
+}
+
+/*  update & delete btns & video */
+@media only screen and (min-width: 36em){
+    div.card a.btn, div.card form input[type="submit"]{
+        width: 5em;
+    }
+    #video{ 
+        width: 32em;
+        height: 18em;
+    }
+}
