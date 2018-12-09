@@ -1,5 +1,5 @@
 {{#each ideas}}
-    <div class="card card-body mb-3" style="box-shadow: 0 0 2px rgba(0,0,0,0.2);">
+    <div class="card card-body mb-3 collapsed" style="box-shadow: 0 0 2px rgba(0,0,0,0.2);">
         <h3 class="font-weight-bold">{{title}}</h3>
         <pre>{{details}}</pre>
         <ul class="list-unstyled d-flex flex align-items-center flex-wrap">
@@ -10,20 +10,20 @@
         </ul>
         
         <div class="video-section">
-            <button class="addVideo">
-                <img src="/img/video-add.png">
-            </button>
-            <input class="form-control" type="text" name="url" placeholder="http://" autocomplete="off" >
+            {{#if videoURL}}
+                <iframe id="video"
+                  src={{videoURL}}
+                  frameborder="0" allowfullscreen>
+                </iframe>
+            {{else}}    
+                <button class="addVideo">
+                    <img src="/img/video-add.png">
+                </button>
+                <input class="form-control" type="text" name="url" placeholder="http://" autocomplete="off" >
+            {{/if}}
         </div>
 
-        <!--
-        <iframe id="video"
-          src="https://www.youtube.com/embed/Btl7j9C03qs?showinfo=0"
-          frameborder="0" allowfullscreen>
-        </iframe>
-        -->
-
-        <a class="btn btn-dark btn-block btn-sm mb-2" href="/ideas/edit/{{id}}">Edit</a>
+        <a id="edit-btn" class="btn btn-dark btn-block btn-sm mb-2" href="/ideas/edit/{{id}}">Edit</a>
         <form method="post" action="/ideas/{{id}}?_method=DELETE">
             <input type="hidden" name="_method" value="DELETE">
             <input type="submit" class="btn btn-danger btn-block btn-sm" value="Delete">

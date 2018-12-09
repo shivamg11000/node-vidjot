@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const IdeaSchema= new Schema({
     title: {
@@ -19,8 +19,12 @@ const IdeaSchema= new Schema({
         ref: 'User',
         required: true
     },
-    casts : [String]
+    casts : [String],
+    videoURL : {
+        type: String,
+        required: false
+    }
     
-})
+});
 
-module.exports = mongoose.model('Idea', IdeaSchema)
+module.exports = mongoose.model('Idea', IdeaSchema);

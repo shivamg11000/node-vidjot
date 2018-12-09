@@ -108,6 +108,26 @@ router.delete('/:id', (req, res) => {
 })
 
 
+// adding video functionality
+// add video (actually its a edit request with all same details except video is added)
+router.put('/:id/video', (req, res) => {
+    
+    Idea.findOne({
+        _id: req.params.id,
+        user: req.user
+    })
+    .then(idea => {
+        // adding video URL
+        idea.videoURL = req.body.url;
+        idea.save()
+            .then(idea => {
+                res.status(200).json({ msg: 'video added' });
+            })
+        
+    })
+
+})
+
 
 
 module.exports = router
